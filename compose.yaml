@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: air_ticket_service
+    ports:
+      - "5433:5432"
+
+  migrations:
+    image: liquibase/liquibase:4.28.0
+    volumes:
+      - ./src/main/resources/migrations:/liquibase/changelog
+    depends_on:
+      - postgres
+    command: >
+      --url=jdbc:postgresql://postgres:5432/air_ticket_service
+      --username=postgres
+      --password=postgres
+      --changeLogFile=changelog/master.yml
+      update
